@@ -3,7 +3,7 @@
 
 // Definição da struct Carta
 typedef struct {
-    char estado[3];
+    char estado[3]; 
     char codigo[3];
     char cidade[30];
     unsigned long int populacao;
@@ -54,40 +54,54 @@ void compararCartas(Carta c1, Carta c2, int atributoEscolhido) {
     float valor1, valor2;
     int vencedor;
 
-    if (atributoEscolhido == 1) {
-        atributoNome = "População";
-        valor1 = c1.populacao;
-        valor2 = c2.populacao;
-        vencedor = (valor1 > valor2) ? 1 : 2;
-    } else if (atributoEscolhido == 2) {
-        atributoNome = "Área";
-        valor1 = c1.area;
-        valor2 = c2.area;
-        vencedor = (valor1 > valor2) ? 1 : 2;
-    } else if (atributoEscolhido == 3) {
-        atributoNome = "PIB";
-        valor1 = c1.pib;
-        valor2 = c2.pib;
-        vencedor = (valor1 > valor2) ? 1 : 2;
-    } else if (atributoEscolhido == 4) {
-        atributoNome = "Densidade Populacional";
-        valor1 = c1.densidadePopulacional;
-        valor2 = c2.densidadePopulacional;
-        vencedor = (valor1 < valor2) ? 1 : 2;
-    } else if (atributoEscolhido == 5) {
-        atributoNome = "PIB per Capita";
-        valor1 = c1.pibPerCapita;
-        valor2 = c2.pibPerCapita;
-        vencedor = (valor1 > valor2) ? 1 : 2;
-    } else {
-        printf("Erro: Atributo inválido\n");
-        return;
+    switch (atributoEscolhido) {
+        case 1:
+            atributoNome = "População";
+            valor1 = c1.populacao;
+            valor2 = c2.populacao;
+            break;
+        case 2:
+            atributoNome = "Área";
+            valor1 = c1.area;
+            valor2 = c2.area;
+            break;
+        case 3:
+            atributoNome = "PIB";
+            valor1 = c1.pib;
+            valor2 = c2.pib;
+            break;
+        case 4:
+            atributoNome = "Densidade Populacional";
+            valor1 = c1.densidadePopulacional;
+            valor2 = c2.densidadePopulacional;
+            break;
+        case 5:
+            atributoNome = "PIB per Capita";
+            valor1 = c1.pibPerCapita;
+            valor2 = c2.pibPerCapita;
+            break;
+        default:
+            printf("Erro: Atributo inválido\n");
+            return;
     }
 
-    printf("Comparação de cartas (Atributo: %s):\n\n", atributoNome);
-    printf("Carta 1 - %s (%s): %.2f\n", c1.cidade, c1.estado, valor1);
-    printf("Carta 2 - %s (%s): %.2f\n", c2.cidade, c2.estado, valor2);
-    printf("\nResultado: Carta %d (%s) venceu!\n", vencedor, vencedor == 1 ? c1.cidade : c2.cidade);
+    if (valor1 == valor2) {
+        printf("Comparação de cartas (Atributo: %s):\n\n", atributoNome);
+        printf("Carta 1 - %s (%s): %.2f\n", c1.cidade, c1.estado, valor1);
+        printf("Carta 2 - %s (%s): %.2f\n", c2.cidade, c2.estado, valor2);
+        printf("\nResultado: Empate!\n");
+    } else {
+        if (atributoEscolhido == 4) {
+            vencedor = (valor1 < valor2) ? 1 : 2;
+        } else {
+            vencedor = (valor1 > valor2) ? 1 : 2;
+        }
+
+        printf("Comparação de cartas (Atributo: %s):\n\n", atributoNome);
+        printf("Carta 1 - %s (%s): %.2f\n", c1.cidade, c1.estado, valor1);
+        printf("Carta 2 - %s (%s): %.2f\n", c2.cidade, c2.estado, valor2);
+        printf("\nResultado: Carta %d (%s) venceu!\n", vencedor, vencedor == 1 ? c1.cidade : c2.cidade);
+    }
 }
 
 // Função principal
@@ -98,7 +112,7 @@ int main() {
     cadastroCartas(&carta1, 1);
     cadastroCartas(&carta2, 2);
 
-    // Exibir opções para o usuário escolher o atributo de comparação
+    // Exibir menu interativo para o usuário escolher o atributo de comparação
     printf("\nEscolha o atributo para comparação:\n");
     printf("1 - População\n");
     printf("2 - Área\n");
@@ -109,6 +123,6 @@ int main() {
     scanf("%d", &atributoEscolhido);
 
     compararCartas(carta1, carta2, atributoEscolhido);
-
+    
     return 0;
 }
