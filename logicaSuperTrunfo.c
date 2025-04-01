@@ -47,59 +47,45 @@ void cadastroCartas(Carta *c, int num) {
     c->pibPerCapita = (c->pib * 1e9) / c->populacao;
 }
 
-// Função para comparar e exibir os resultados
-void compararCartas(Carta c1, Carta c2, int atributoEscolhido) {
-    printf("\nComparação de Cartas:\n");
-    char *atributoNome;
-    float valor1, valor2;
+// Função para exibir o menu de atributos
+typedef struct {
+    int opcao;
+    char nome[30];
+} Atributo;
+
+Atributo atributos[] = {
+    {1, "População"},
+    {2, "Área"},
+    {3, "PIB"},
+    {4, "Densidade Populacional"},
+    {5, "PIB per Capita"}
+};
+
+// Função para comparar as cartas com dois atributos
+void compararCartas(Carta c1, Carta c2, int atributo1, int atributo2) {
+    float valor1_a1, valor2_a1, valor1_a2, valor2_a2;
     int vencedor;
-
-    switch (atributoEscolhido) {
-        case 1:
-            atributoNome = "População";
-            valor1 = c1.populacao;
-            valor2 = c2.populacao;
-            break;
-        case 2:
-            atributoNome = "Área";
-            valor1 = c1.area;
-            valor2 = c2.area;
-            break;
-        case 3:
-            atributoNome = "PIB";
-            valor1 = c1.pib;
-            valor2 = c2.pib;
-            break;
-        case 4:
-            atributoNome = "Densidade Populacional";
-            valor1 = c1.densidadePopulacional;
-            valor2 = c2.densidadePopulacional;
-            break;
-        case 5:
-            atributoNome = "PIB per Capita";
-            valor1 = c1.pibPerCapita;
-            valor2 = c2.pibPerCapita;
-            break;
-        default:
-            printf("Erro: Atributo inválido\n");
-            return;
-    }
-
-    if (valor1 == valor2) {
-        printf("Comparação de cartas (Atributo: %s):\n\n", atributoNome);
-        printf("Carta 1 - %s (%s): %.2f\n", c1.cidade, c1.estado, valor1);
-        printf("Carta 2 - %s (%s): %.2f\n", c2.cidade, c2.estado, valor2);
+    
+    float valores1[] = {(float)c1.populacao, c1.area, c1.pib, c1.densidadePopulacional, c1.pibPerCapita};
+    float valores2[] = {(float)c2.populacao, c2.area, c2.pib, c2.densidadePopulacional, c2.pibPerCapita};
+    
+    valor1_a1 = valores1[atributo1 - 1];
+    valor2_a1 = valores2[atributo1 - 1];
+    valor1_a2 = valores1[atributo2 - 1];
+    valor2_a2 = valores2[atributo2 - 1];
+    
+    float soma1 = valor1_a1 + valor1_a2;
+    float soma2 = valor2_a1 + valor2_a2;
+    
+    printf("\nComparação de Cartas:\n");
+    printf("Atributos escolhidos: %s e %s\n", atributos[atributo1 - 1].nome, atributos[atributo2 - 1].nome);
+    printf("\nCarta 1 - %s (%s): %.2f + %.2f = %.2f\n", c1.cidade, c1.estado, valor1_a1, valor1_a2, soma1);
+    printf("Carta 2 - %s (%s): %.2f + %.2f = %.2f\n", c2.cidade, c2.estado, valor2_a1, valor2_a2, soma2);
+    
+    if (soma1 == soma2) {
         printf("\nResultado: Empate!\n");
     } else {
-        if (atributoEscolhido == 4) {
-            vencedor = (valor1 < valor2) ? 1 : 2;
-        } else {
-            vencedor = (valor1 > valor2) ? 1 : 2;
-        }
-
-        printf("Comparação de cartas (Atributo: %s):\n\n", atributoNome);
-        printf("Carta 1 - %s (%s): %.2f\n", c1.cidade, c1.estado, valor1);
-        printf("Carta 2 - %s (%s): %.2f\n", c2.cidade, c2.estado, valor2);
+        vencedor = (soma1 > soma2) ? 1 : 2;
         printf("\nResultado: Carta %d (%s) venceu!\n", vencedor, vencedor == 1 ? c1.cidade : c2.cidade);
     }
 }
@@ -107,22 +93,32 @@ void compararCartas(Carta c1, Carta c2, int atributoEscolhido) {
 // Função principal
 int main() {
     Carta carta1, carta2;
-    int atributoEscolhido;
+    int atributo1, atributo2;
 
     cadastroCartas(&carta1, 1);
     cadastroCartas(&carta2, 2);
 
-    // Exibir menu interativo para o usuário escolher o atributo de comparação
-    printf("\nEscolha o atributo para comparação:\n");
-    printf("1 - População\n");
-    printf("2 - Área\n");
-    printf("3 - PIB\n");
-    printf("4 - Densidade Populacional\n");
-    printf("5 - PIB per Capita\n");
+    // Escolher primeiro atributo
+    printf("\nEscolha o primeiro atributo para comparação:\n");
+    for (int i = 0; i < 5; i++) {
+        printf("%d - %s\n", atributos[i].opcao, atributos[i].nome);
+    }
     printf("Digite a opção desejada: ");
-    scanf("%d", &atributoEscolhido);
+    scanf("%d", &atributo1);
 
-    compararCartas(carta1, carta2, atributoEscolhido);
+    // Escolher segundo atributo, garantindo que seja diferente do primeiro
+    do {
+        printf("\nEscolha o segundo atributo para comparação:\n");
+        for (int i = 0; i < 5; i++) {
+            if (atributos[i].opcao != atributo1) {
+                printf("%d - %s\n", atributos[i].opcao, atributos[i].nome);
+            }
+        }
+        printf("Digite a opção desejada: ");
+        scanf("%d", &atributo2);
+    } while (atributo1 == atributo2);
+
+    compararCartas(carta1, carta2, atributo1, atributo2);
     
     return 0;
 }
